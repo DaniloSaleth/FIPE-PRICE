@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Show Me The Price</string>
+    <string name="title_header">Para encontrar o preço de um veículo na tabela FIPE siga as instruções abaixo:</string>
+    <string name="instruction_01">Selecione o tipo de veículo</string>
+    <string name="instruction_02">Selecione a marca de veículo</string>
+    <string name="instruction_03">Selecione o modelo do veículo</string>
+    <string name="instruction_04">Selecione o ano do veículo</string>
+    <string name="motocicleta">Motocicleta</string>
+    <string name="carro">Carro</string>
+    <string name="caminhao">Caminhão</string>
+    <string name="search_hint">Busque por uma marca</string>
+    <string name="car_as_a_logo">Car as a logo</string>
+    <string name="yellow_half_border">Yellow half border</string>
+    <string name="nenhuma_marca_encontrada">Nenhuma marca encontrada</string>
+    <string name="marca_do_ve_culo">Marca do veículo</string>
+    <string name="modelo_do_ve_culo">modelo do veículo</string>
+    <string name="busque_por_um_ano">Busque por um ano</string>
+    <string name="nenhum_ano_encontrado">Nenhum ano encontrado</string>
+    <string name="busque_por_um_modelos">Busque por um modelos</string>
+    <string name="nenhum_modelo_encontrado">Nenhum modelo encontrado</string>
+    <string name="pre_o_n_o_encontrado">Preço não encontrado</string>
+    <string name="image_kind_of_vehicle">image kind of vehicle</string>
+    <string name="marca">Marca:</string>
+    <string name="ano">Ano:</string>
+    <string name="c_digo_fipe">Código FIPE:</string>
+    <string name="combust_vel">Combustível:</string>
+    <string name="m_s_refer_ncia">Mês Referência:</string>
+</resources>
