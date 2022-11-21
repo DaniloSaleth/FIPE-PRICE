@@ -43,7 +43,6 @@ class PriceViewModel(private val priceRepository: PriceRepository) : ViewModel()
             when(this){
                 is PriceRepositoryStatus.PriceSuccess -> _price.value = response
                 is PriceRepositoryStatus.Error -> _error.value = response
-                else -> _empty.value = true
             }
         }
     }

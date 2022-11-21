@@ -4,7 +4,6 @@ import com.example.showmetheprice.model.price.Price
 
 sealed class PriceRepositoryStatus{
     data class PriceSuccess(val response : Price) : PriceRepositoryStatus()
-    data class EmptyList(val response : Boolean) : PriceRepositoryStatus()
     data class Error(val response: Throwable) : PriceRepositoryStatus()
 }
 
