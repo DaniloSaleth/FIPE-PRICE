@@ -11,10 +11,4 @@ class ModelosRepositoryImpl (private val endpoint : Endpoint) : ModelosRepositor
             endpoint.getModelos(type,codigoMarca)
         }
     }
-
-    override suspend fun getModelosByName(type: String, codigoMarca : String, name: String): ModeloResponse {
-        return withContext(Dispatchers.IO){
-            endpoint.getModelos(type,codigoMarca)
-        }
-    }
 }

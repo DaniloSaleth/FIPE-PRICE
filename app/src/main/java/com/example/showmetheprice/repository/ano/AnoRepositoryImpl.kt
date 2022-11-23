@@ -16,15 +16,4 @@ class AnoRepositoryImpl (private val endpoint : Endpoint) : AnoRepository {
             endpoint.getAno(type,codigoMarca,codigoModelo)
         }
     }
-
-    override suspend fun getAnoByName(
-        type: String,
-        codigoMarca: String,
-        codigoModelo: String,
-        name: String,
-    ): List<Ano> {
-        return withContext(Dispatchers.IO) {
-            endpoint.getAno(type, codigoMarca, codigoModelo)
-        }
-    }
 }

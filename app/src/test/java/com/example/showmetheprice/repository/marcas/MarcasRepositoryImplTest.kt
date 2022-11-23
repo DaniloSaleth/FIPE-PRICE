@@ -21,7 +21,7 @@ internal class MarcasRepositoryImplTest{
     }
 
     @Test
-    fun getMarcas_inCaseOfSuccessShouldReturnListOfMarcasFromEndpoint (){
+    fun getMarcas_ShouldReturnListOfMarcasFromEndpoint (){
         val expectedResultEndpoint : List<Marca> = listOf(
             Marca("", ""),
         )
@@ -33,99 +33,8 @@ internal class MarcasRepositoryImplTest{
         } returns expectedResultEndpoint
 
         runBlocking {
-            val expectedResult = MarcasRepositoryStatus.MarcasSuccess(expectedResultEndpoint)
             val result = marcasRepository.getMarcas("")
-            Assert.assertEquals(expectedResult,result)
-        }
-    }
-
-    @Test
-    fun getMarcas_inCaseOfEmptyShouldReturnTrueInEmptyState(){
-        val expectedResultEndpoint : List<Marca> = listOf()
-
-        every {
-            runBlocking {
-                endpoint.getMarcas(any())
-            }
-        } returns expectedResultEndpoint
-
-        runBlocking {
-            val expectedResult = MarcasRepositoryStatus.EmptyList(true)
-            val result = marcasRepository.getMarcas("")
-            Assert.assertEquals(expectedResult,result)
-        }
-    }
-
-    @Test
-    fun getMarcas_inCaseOfErrorShouldReturnThrowable (){
-        val expectedResultEndpoint = Throwable()
-
-        every {
-            runBlocking {
-                endpoint.getMarcas(any())
-            }
-        } throws  expectedResultEndpoint
-
-        runBlocking {
-            val expectedResult = MarcasRepositoryStatus.Error(expectedResultEndpoint)
-            val result = marcasRepository.getMarcas("")
-            Assert.assertEquals(expectedResult,result)
-        }
-    }
-
-    @Test
-    fun getMarcasByName_inCaseOfSuccessShouldReturnListOfMarcasFromEndpoint (){
-        val expectedResultEndpoint : List<Marca> = listOf(
-            Marca("", ""),
-            Marca("1", "1"),
-        )
-
-        every {
-            runBlocking {
-                endpoint.getMarcas(any())
-            }
-        } returns expectedResultEndpoint
-
-        runBlocking {
-            val expectedResult = MarcasRepositoryStatus.MarcasSuccess(listOf(expectedResultEndpoint[1]))
-            val result = marcasRepository.getMarcasByName("","1")
-            Assert.assertEquals(expectedResult,result)
-        }
-    }
-
-    @Test
-    fun getMarcasByName_inCaseOfEmptyShouldReturnTrueInEmptyState(){
-        val expectedResultEndpoint : List<Marca> = listOf(
-            Marca("", ""),
-        )
-
-        every {
-            runBlocking {
-                endpoint.getMarcas(any())
-            }
-        } returns expectedResultEndpoint
-
-        runBlocking {
-            val expectedResult = MarcasRepositoryStatus.EmptyList(true)
-            val result = marcasRepository.getMarcasByName("","1")
-            Assert.assertEquals(expectedResult,result)
-        }
-    }
-
-    @Test
-    fun getMarcasByName_inCaseOfErrorShouldReturnThrowable (){
-        val expectedResultEndpoint = Throwable()
-
-        every {
-            runBlocking {
-                endpoint.getMarcas(any())
-            }
-        } throws  expectedResultEndpoint
-
-        runBlocking {
-            val expectedResult = MarcasRepositoryStatus.Error(expectedResultEndpoint)
-            val result = marcasRepository.getMarcasByName("","1")
-            Assert.assertEquals(expectedResult,result)
+            Assert.assertEquals(expectedResultEndpoint,result)
         }
     }
 }

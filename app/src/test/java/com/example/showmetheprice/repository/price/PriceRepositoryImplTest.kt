@@ -32,27 +32,8 @@ internal class PriceRepositoryImplTest{
         } returns expectedResultEndpoint
 
         runBlocking {
-            val expectedResult = PriceRepositoryStatus.PriceSuccess(expectedResultEndpoint)
             val result = priceRepository.getPrice("","","","")
-            Assert.assertEquals(expectedResult,result)
-        }
-    }
-
-
-    @Test
-    fun getPrice_inCaseOfEmptyShouldReturnTrueInEmptyState(){
-        val expectedResultEndpoint = Throwable()
-
-        every {
-            runBlocking {
-                endpoint.getPrice(any(),any(),any(),any())
-            }
-        } throws  expectedResultEndpoint
-
-        runBlocking {
-            val expectedResult = PriceRepositoryStatus.Error(expectedResultEndpoint)
-            val result = priceRepository.getPrice("","","","")
-            Assert.assertEquals(expectedResult,result)
+            Assert.assertEquals(expectedResultEndpoint,result)
         }
     }
 }

@@ -11,10 +11,4 @@ class MarcasRepositoryImpl (private val endpoint : Endpoint) : MarcasRepository 
                 endpoint.getMarcas(type)
         }
     }
-
-    override suspend fun getMarcasByName(type: String, name: String): List<Marca> {
-        return withContext(Dispatchers.IO){
-            endpoint.getMarcas(type)
-        }
-    }
 }
