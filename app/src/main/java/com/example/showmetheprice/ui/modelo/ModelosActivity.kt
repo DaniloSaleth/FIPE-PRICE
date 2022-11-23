@@ -7,6 +7,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import com.example.showmetheprice.databinding.ActivityModelosBinding
+import com.example.showmetheprice.model.modelos.Modelo
 import com.example.showmetheprice.ui.ano.AnoActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -61,23 +62,31 @@ class ModelosActivity : AppCompatActivity() {
     }
 
     private fun startObserver() {
-        viewModel.modelo.observe(this){
-            binding.rvModelos.visibility = View.VISIBLE
-            binding.tvNotFound.visibility = View.GONE
-            adapter = ModelosAdapter(it)
-            binding.rvModelos.adapter = adapter
-            setYear()
+        viewModel.state.observe(this){ state ->
+            when(state){
+                is ModelosState.ModelosSuccess-> setSuccessState(state.response)
+                is ModelosState.EmptyList -> setEmptyState()
+                is ModelosState.Error -> setErrorState(state.response.message)
+            }
         }
+    }
 
-        viewModel.empty.observe(this){
-            binding.rvModelos.visibility = View.GONE
-            binding.tvNotFound.visibility = View.VISIBLE
-        }
+    private fun setSuccessState(lista : List<Modelo>){
+        binding.rvModelos.visibility = View.VISIBLE
+        binding.tvNotFound.visibility = View.GONE
+        adapter = ModelosAdapter(lista)
+        binding.rvModelos.adapter = adapter
+        setYear()
+    }
 
-        viewModel.error.observe(this){
-            binding.rvModelos.visibility = View.GONE
-            binding.tvNotFound.visibility = View.VISIBLE
-            binding.tvNotFound.text = it.message
-        }
+    private fun setEmptyState(){
+        binding.rvModelos.visibility = View.GONE
+        binding.tvNotFound.visibility = View.VISIBLE
+    }
+
+    private fun setErrorState(msg : String?){
+        binding.rvModelos.visibility = View.GONE
+        binding.tvNotFound.visibility = View.VISIBLE
+        binding.tvNotFound.text = msg
     }
 }

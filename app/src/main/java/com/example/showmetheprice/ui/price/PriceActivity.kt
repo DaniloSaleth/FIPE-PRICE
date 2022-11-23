@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import com.example.showmetheprice.R
 import com.example.showmetheprice.databinding.ActivityPriceBinding
+import com.example.showmetheprice.model.price.Price
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PriceActivity : AppCompatActivity() {
@@ -23,43 +24,49 @@ class PriceActivity : AppCompatActivity() {
         val codigoAno= intent.getStringExtra("codigoAno").toString()
 
         startObserver()
-        viewModel.getIcon(type)
+        setIcon(type)
         viewModel.getPrice(type, codigoMarca, codigoModelo, codigoAno)
     }
 
-    private fun startObserver(){
-        viewModel.price.observe(this){
-            binding.cvGeneral.visibility = View.VISIBLE
-            binding.tvPrice.text = it.Valor
-            binding.tvAno.text = it.AnoModelo.toString()
-            binding.tvMarca.text = it.Marca
-            binding.tvCombustivel.text = it.Combustivel +" - "+it.SiglaCombustivel
-            binding.tvMes.text = it.MesReferencia
-            binding.tvCodigoFipe.text = it.CodigoFipe
-            binding.tvModelo.text = it.Modelo
+    private fun setIcon(icon : String){
+        when (icon) {
+            "motos" -> {
+                binding.ivVaiculo.setImageResource(R.drawable.ic_motorcycle_24)
+            }
+            "carros" -> {
+                binding.ivVaiculo.setImageResource(R.drawable.ic_car_24)
+            }
+            else -> {
+                binding.ivVaiculo.setImageResource(R.drawable.ic_truck_24)
+            }
         }
+    }
 
-        viewModel.iconCaminhao.observe(this){
-            binding.ivVaiculo.setImageResource(R.drawable.ic_truck_24)
+    private fun startObserver() {
+        viewModel.state.observe(this){ state ->
+            when(state){
+                is PriceState.PriceSuccess-> setSuccessState(state.response)
+                is PriceState.Error -> setErrorState(state.response.message)
+            }
         }
+    }
 
-        viewModel.iconCarro.observe(this){
-            binding.ivVaiculo.setImageResource(R.drawable.ic_car_24)
-        }
+    private fun setSuccessState(price : Price){
+        binding.cvGeneral.visibility = View.VISIBLE
+        binding.tvPrice.text = price.Valor
+        binding.tvAno.text = price.AnoModelo.toString()
+        binding.tvMarca.text = price.Marca
+        binding.tvCombustivel.text = price.Combustivel +" - "+price.SiglaCombustivel
+        binding.tvMes.text = price.MesReferencia
+        binding.tvCodigoFipe.text = price.CodigoFipe
+        binding.tvModelo.text = price.Modelo
+    }
 
-        viewModel.iconMoto.observe(this){
-            binding.ivVaiculo.setImageResource(R.drawable.ic_motorcycle_24)
-        }
 
-        viewModel.empty.observe(this){
-            binding.tvNotFound.visibility = View.VISIBLE
-            binding.cvGeneral.visibility = View.GONE
-        }
 
-        viewModel.error.observe(this){
-            binding.tvNotFound.visibility = View.VISIBLE
-            binding.tvNotFound.text = it.message
-            binding.cvGeneral.visibility = View.GONE
-        }
+    private fun setErrorState(msg : String?){
+        binding.tvNotFound.visibility = View.VISIBLE
+        binding.tvNotFound.text = msg
+        binding.cvGeneral.visibility = View.GONE
     }
 }

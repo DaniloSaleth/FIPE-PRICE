@@ -7,6 +7,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import com.example.showmetheprice.databinding.ActivityMarcasBinding
+import com.example.showmetheprice.model.marcas.Marca
 import com.example.showmetheprice.ui.modelo.ModelosActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -55,22 +56,31 @@ class MarcasActivity : AppCompatActivity() {
     }
 
     private fun startObserver() {
-        viewModel.marca.observe(this){
-            binding.rvMarcas.visibility = View.VISIBLE
-            binding.tvNotFound.visibility = View.GONE
-            adapter = MarcasAdapter(it)
-            binding.rvMarcas.adapter = adapter
-            setModelo()
+        viewModel.state.observe(this){ state ->
+            when(state){
+                is MarcasState.MarcasSuccess-> setSuccessState(state.response)
+                is MarcasState.EmptyList -> setEmptyState()
+                is MarcasState.Error -> setErrorState(state.response.message)
+            }
         }
+    }
 
-        viewModel.empty.observe(this){
-            binding.rvMarcas.visibility = View.GONE
-            binding.tvNotFound.visibility = View.VISIBLE
-        }
+    private fun setSuccessState(lista : List<Marca>){
+        binding.rvMarcas.visibility = View.VISIBLE
+        binding.tvNotFound.visibility = View.GONE
+        adapter = MarcasAdapter(lista)
+        binding.rvMarcas.adapter = adapter
+        setModelo()
+    }
 
-        viewModel.error.observe(this){
-            binding.rvMarcas.visibility = View.GONE
-            binding.tvNotFound.visibility = View.VISIBLE
-        }
+    private fun setEmptyState(){
+        binding.rvMarcas.visibility = View.GONE
+        binding.tvNotFound.visibility = View.VISIBLE
+    }
+
+    private fun setErrorState(msg : String?){
+        binding.rvMarcas.visibility = View.GONE
+        binding.tvNotFound.visibility = View.VISIBLE
+        binding.tvNotFound.text = msg
     }
 }

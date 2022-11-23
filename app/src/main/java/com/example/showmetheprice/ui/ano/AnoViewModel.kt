@@ -6,32 +6,26 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.showmetheprice.model.ano.Ano
 import com.example.showmetheprice.repository.ano.AnoRepository
-import com.example.showmetheprice.repository.ano.AnoRepositoryStatus
 import kotlinx.coroutines.launch
 
 class AnoViewModel(private val anoRepository: AnoRepository) : ViewModel() {
 
-    private val _ano = MutableLiveData<List<Ano>>()
-    val ano : LiveData<List<Ano>>
-        get() = _ano
-
-    private val _error = MutableLiveData<Throwable>()
-    val error: LiveData<Throwable>
-        get() = _error
-
-    private val _empty = MutableLiveData<Boolean>()
-    val empty: LiveData<Boolean>
-        get() = _empty
+    private val _state = MutableLiveData<State>()
+    val state : LiveData<State>
+        get() = _state
 
     fun getAno(type : String,
                codigoMarca : String,
                codigoModelo : String) = viewModelScope.launch {
-        anoRepository.getAno(type,codigoMarca,codigoModelo).apply {
-            when(this){
-                is AnoRepositoryStatus.AnoSuccess -> _ano.value = response
-                is AnoRepositoryStatus.Error -> _error.value = response
-                is AnoRepositoryStatus.EmptyList -> _empty.value = response
+        try {
+            val listOfAno = anoRepository.getAno(type,codigoMarca,codigoModelo)
+            if (listOfAno.isEmpty()){
+                _state.value = State.EmptyList
+            } else {
+                _state.value = State.AnoSuccess(listOfAno)
             }
+        }catch (t : Throwable){
+            _state.value = State.Error(t)
         }
     }
 
@@ -39,13 +33,22 @@ class AnoViewModel(private val anoRepository: AnoRepository) : ViewModel() {
                          codigoMarca : String,
                          codigoModelo : String,
                          name : String) = viewModelScope.launch {
-        anoRepository.getAnoByName(type,codigoMarca, codigoModelo, name).apply {
-            when(this){
-                is AnoRepositoryStatus.AnoSuccess -> _ano.value = response
-                is AnoRepositoryStatus.Error -> _error.value = response
-                is AnoRepositoryStatus.EmptyList -> _empty.value = response
+        try {
+            val listOfAno= anoRepository.getAno(type,codigoMarca,codigoModelo)
+            val response = listOfAno.filter { it.nome.lowercase().contains(name.lowercase()) }
+            if (response.isEmpty()){
+                _state.value = State.EmptyList
+            } else {
+                _state.value = State.AnoSuccess(response)
             }
+        }catch (t : Throwable){
+            _state.value = State.Error(t)
         }
     }
+}
 
+sealed interface State{
+    data class AnoSuccess(val response : List<Ano>) : State
+    object EmptyList : State
+    data class Error(val response: Throwable) : State
 }

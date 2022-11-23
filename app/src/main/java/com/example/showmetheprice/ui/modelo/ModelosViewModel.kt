@@ -6,41 +6,44 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.showmetheprice.model.modelos.Modelo
 import com.example.showmetheprice.repository.modelos.ModelosRepository
-import com.example.showmetheprice.repository.modelos.ModelosRepositoryStatus
 import kotlinx.coroutines.launch
 
 class ModelosViewModel(private val modelosRepository: ModelosRepository) : ViewModel() {
 
-    private val _modelo = MutableLiveData<List<Modelo>>()
-    val modelo : LiveData<List<Modelo>>
-        get() = _modelo
-
-    private val _error = MutableLiveData<Throwable>()
-    val error: LiveData<Throwable>
-        get() = _error
-
-    private val _empty = MutableLiveData<Boolean>()
-    val empty: LiveData<Boolean>
-        get() = _empty
+    private val _state = MutableLiveData<ModelosState>()
+    val state : LiveData<ModelosState>
+        get() = _state
 
     fun getModelos(type : String, codigoMarca : String) = viewModelScope.launch {
-        modelosRepository.getModelos(type,codigoMarca).apply {
-            when(this){
-                is ModelosRepositoryStatus.ModelosSuccess -> _modelo.value = response
-                is ModelosRepositoryStatus.Error -> _error.value = response
-                is ModelosRepositoryStatus.EmptyList -> _empty.value = response
+        try {
+            val listOfModelos = modelosRepository.getModelos(type,codigoMarca).modelos
+            if (listOfModelos.isEmpty()){
+                _state.value = ModelosState.EmptyList
+            } else {
+                _state.value = ModelosState.ModelosSuccess(listOfModelos)
             }
+        }catch (t : Throwable){
+            _state.value = ModelosState.Error(t)
         }
     }
 
     fun getModelosByName(type : String, codigoMarca : String, name : String) = viewModelScope.launch {
-        modelosRepository.getModelosByName(type,codigoMarca, name).apply {
-            when(this){
-                is ModelosRepositoryStatus.ModelosSuccess -> _modelo.value = response
-                is ModelosRepositoryStatus.Error -> _error.value = response
-                is ModelosRepositoryStatus.EmptyList -> _empty.value = response
+        try {
+            val listOfModelos= modelosRepository.getModelos(type,codigoMarca).modelos
+            val response = listOfModelos.filter { it.nome.lowercase().contains(name.lowercase()) }
+            if (response.isEmpty()){
+                _state.value = ModelosState.EmptyList
+            } else {
+                _state.value = ModelosState.ModelosSuccess(response)
             }
+        }catch (t : Throwable){
+            _state.value = ModelosState.Error(t)
         }
     }
+}
 
+sealed interface ModelosState{
+    data class ModelosSuccess(val response : List<Modelo>) : ModelosState
+    object EmptyList : ModelosState
+    data class Error(val response: Throwable) : ModelosState
 }

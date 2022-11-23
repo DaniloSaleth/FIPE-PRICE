@@ -6,41 +6,46 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.showmetheprice.model.marcas.Marca
 import com.example.showmetheprice.repository.marcas.MarcasRepository
-import com.example.showmetheprice.repository.marcas.MarcasRepositoryStatus
 import kotlinx.coroutines.launch
 
 class MarcasViewModel(private val marcasRepository: MarcasRepository) : ViewModel() {
 
-    private val _marca = MutableLiveData<List<Marca>>()
-    val marca : LiveData<List<Marca>>
-        get() = _marca
-
-    private val _error = MutableLiveData<Throwable>()
-    val error: LiveData<Throwable>
-        get() = _error
-
-    private val _empty = MutableLiveData<Boolean>()
-    val empty: LiveData<Boolean>
-        get() = _empty
+    private val _state = MutableLiveData<MarcasState>()
+    val state : LiveData<MarcasState>
+        get() = _state
 
     fun getMarcas(type : String) = viewModelScope.launch {
         marcasRepository.getMarcas(type).apply {
-            when(this){
-                is MarcasRepositoryStatus.MarcasSuccess -> _marca.value = response
-                is MarcasRepositoryStatus.Error -> _error.value = response
-                is MarcasRepositoryStatus.EmptyList -> _empty.value = true
+            try {
+                val listOfMarcas = marcasRepository.getMarcas(type)
+                if (listOfMarcas.isEmpty()){
+                    _state.value = MarcasState.EmptyList
+                } else {
+                    _state.value = MarcasState.MarcasSuccess(listOfMarcas)
+                }
+            }catch (t : Throwable){
+                _state.value = MarcasState.Error(t)
             }
         }
     }
 
     fun getMarcasByName(type : String, name : String) = viewModelScope.launch {
-        marcasRepository.getMarcasByName(type, name).apply {
-            when(this){
-                is MarcasRepositoryStatus.MarcasSuccess -> _marca.value = response
-                is MarcasRepositoryStatus.Error -> _error.value = response
-                is MarcasRepositoryStatus.EmptyList -> _empty.value = true
+        try {
+            val listOfMarcas = marcasRepository.getMarcas(type)
+            val response = listOfMarcas.filter { it.nome.lowercase().contains(name.lowercase()) }
+            if (response.isEmpty()){
+                _state.value = MarcasState.EmptyList
+            } else {
+                _state.value = MarcasState.MarcasSuccess(response)
             }
+        }catch (t : Throwable){
+            _state.value = MarcasState.Error(t)
         }
     }
+}
 
+sealed interface MarcasState{
+    data class MarcasSuccess(val response : List<Marca>) : MarcasState
+    object EmptyList : MarcasState
+    data class Error(val response: Throwable) : MarcasState
 }

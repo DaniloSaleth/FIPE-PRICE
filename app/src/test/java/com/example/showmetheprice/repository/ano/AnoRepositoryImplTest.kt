@@ -2,6 +2,7 @@ package com.example.showmetheprice.repository.ano
 
 import com.example.showmetheprice.model.ano.Ano
 import com.example.showmetheprice.network.Endpoint
+import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.mockk
 import junit.framework.Assert
@@ -26,10 +27,8 @@ internal class AnoRepositoryImplTest {
             Ano("2020","2020-1"),
         )
 
-        every {
-            runBlocking {
-                endpoint.getAno(any(), any(), any())
-            }
+        coEvery {
+            endpoint.getAno(any(), any(), any())
         } returns expectedResultEndpoint
 
         runBlocking {
@@ -60,10 +59,8 @@ internal class AnoRepositoryImplTest {
     fun getAno_inCaseOfErrorShouldReturnThrowable (){
         val expectedResultEndpoint = Throwable()
 
-        every {
-            runBlocking {
-                endpoint.getAno(any(),any(),any())
-            }
+        coEvery {
+            endpoint.getAno(any(),any(),any())
         } throws expectedResultEndpoint
 
         runBlocking {

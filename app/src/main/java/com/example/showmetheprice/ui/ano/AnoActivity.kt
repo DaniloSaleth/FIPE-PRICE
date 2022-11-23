@@ -7,6 +7,7 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import com.example.showmetheprice.databinding.ActivityAnoBinding
+import com.example.showmetheprice.model.ano.Ano
 import com.example.showmetheprice.ui.price.PriceActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -63,23 +64,31 @@ class AnoActivity : AppCompatActivity() {
     }
 
     private fun startObserver() {
-        viewModel.ano.observe(this){
-            binding.rvAno.visibility = View.VISIBLE
-            binding.tvNotFound.visibility = View.GONE
-            adapter = AnoAdapter(it)
-            binding.rvAno.adapter = adapter
-            setYear()
+        viewModel.state.observe(this){ state ->
+            when(state){
+                is State.AnoSuccess -> setSuccessState(state.response)
+                is State.EmptyList -> setEmptyState()
+                is State.Error -> setErrorState(state.response.message)
+            }
         }
+    }
 
-        viewModel.empty.observe(this){
-            binding.rvAno.visibility = View.GONE
-            binding.tvNotFound.visibility = View.VISIBLE
-        }
+    private fun setSuccessState(lista : List<Ano>){
+        binding.rvAno.visibility = View.VISIBLE
+        binding.tvNotFound.visibility = View.GONE
+        adapter = AnoAdapter(lista)
+        binding.rvAno.adapter = adapter
+        setYear()
+    }
 
-        viewModel.error.observe(this){
-            binding.rvAno.visibility = View.GONE
-            binding.tvNotFound.visibility = View.VISIBLE
-            binding.tvNotFound.text = it.message
-        }
+    private fun setEmptyState(){
+        binding.rvAno.visibility = View.GONE
+        binding.tvNotFound.visibility = View.VISIBLE
+    }
+
+    private fun setErrorState(msg : String?){
+        binding.rvAno.visibility = View.GONE
+        binding.tvNotFound.visibility = View.VISIBLE
+        binding.tvNotFound.text = msg
     }
 }
