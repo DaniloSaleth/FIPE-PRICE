@@ -46,7 +46,7 @@ class AnoActivity : AppCompatActivity() {
                         getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
                     inputMethodManager.hideSoftInputFromWindow(currentFocus!!.windowToken, 0)
                 }
-                viewModel.getModelosByName(type, codigoMarca, codigoModelo,textView.text.toString())
+                viewModel.getAnoByName(type, codigoMarca, codigoModelo,textView.text.toString())
             }
             false
         }

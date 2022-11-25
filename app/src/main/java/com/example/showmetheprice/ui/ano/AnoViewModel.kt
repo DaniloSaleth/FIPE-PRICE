@@ -29,7 +29,7 @@ class AnoViewModel(private val anoRepository: AnoRepository) : ViewModel() {
         }
     }
 
-    fun getModelosByName(type : String,
+    fun getAnoByName(type : String,
                          codigoMarca : String,
                          codigoModelo : String,
                          name : String) = viewModelScope.launch {

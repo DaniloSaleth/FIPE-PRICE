@@ -15,17 +15,17 @@ class MarcasViewModel(private val marcasRepository: MarcasRepository) : ViewMode
         get() = _state
 
     fun getMarcas(type : String) = viewModelScope.launch {
-        marcasRepository.getMarcas(type).apply {
-            try {
+        try {
+            marcasRepository.getMarcas(type).apply {
                 val listOfMarcas = marcasRepository.getMarcas(type)
                 if (listOfMarcas.isEmpty()){
                     _state.value = MarcasState.EmptyList
                 } else {
                     _state.value = MarcasState.MarcasSuccess(listOfMarcas)
                 }
-            }catch (t : Throwable){
-                _state.value = MarcasState.Error(t)
             }
+        }catch (t : Throwable){
+            _state.value = MarcasState.Error(t)
         }
     }
 

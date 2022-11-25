@@ -3,8 +3,7 @@ package com.example.showmetheprice.repository.modelos
 import com.example.showmetheprice.model.modelos.Modelo
 import com.example.showmetheprice.model.modelos.ModeloResponse
 import com.example.showmetheprice.network.Endpoint
-import com.example.showmetheprice.ui.modelo.ModelosState
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.Assert
 import kotlinx.coroutines.runBlocking
@@ -24,22 +23,18 @@ internal class ModelosRepositoryImplTest {
     }
 
     @Test
-    fun getModelos_inCaseOfSuccessShouldReturnListOfModelosFromEndpoint (){
+    fun getModelos_inCaseOfSuccessShouldReturnListOfModelosFromEndpoint () = runBlocking{
         val expectedResultEndpoint = ModeloResponse(
             listOf(
                 Modelo("", "")
             )
         )
 
-        every {
-            runBlocking {
-                endpoint.getModelos(any(),any())
-            }
+        coEvery {
+            endpoint.getModelos(any(),any())
         } returns expectedResultEndpoint
 
-        runBlocking {
-            val result = modelosRepository.getModelos("","")
-            Assert.assertEquals(expectedResultEndpoint,result)
-        }
+        val result = modelosRepository.getModelos("","")
+        Assert.assertEquals(expectedResultEndpoint,result)
     }
 }

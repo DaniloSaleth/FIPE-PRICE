@@ -2,7 +2,7 @@ package com.example.showmetheprice.repository.marcas
 
 import com.example.showmetheprice.model.marcas.Marca
 import com.example.showmetheprice.network.Endpoint
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.Assert
 import kotlinx.coroutines.runBlocking
@@ -21,20 +21,16 @@ internal class MarcasRepositoryImplTest{
     }
 
     @Test
-    fun getMarcas_ShouldReturnListOfMarcasFromEndpoint (){
+    fun getMarcas_ShouldReturnListOfMarcasFromEndpoint () = runBlocking{
         val expectedResultEndpoint : List<Marca> = listOf(
             Marca("", ""),
         )
 
-        every {
-            runBlocking {
-                endpoint.getMarcas(any())
-            }
+        coEvery {
+            endpoint.getMarcas(any())
         } returns expectedResultEndpoint
 
-        runBlocking {
-            val result = marcasRepository.getMarcas("")
-            Assert.assertEquals(expectedResultEndpoint,result)
-        }
+        val result = marcasRepository.getMarcas("")
+        Assert.assertEquals(expectedResultEndpoint,result)
     }
 }

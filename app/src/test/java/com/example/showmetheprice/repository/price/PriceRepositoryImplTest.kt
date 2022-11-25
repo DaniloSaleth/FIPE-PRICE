@@ -3,7 +3,7 @@ package com.example.showmetheprice.repository.price
 
 import com.example.showmetheprice.model.price.Price
 import com.example.showmetheprice.network.Endpoint
-import io.mockk.every
+import io.mockk.coEvery
 import io.mockk.mockk
 import junit.framework.Assert
 import kotlinx.coroutines.runBlocking
@@ -22,18 +22,14 @@ internal class PriceRepositoryImplTest{
     }
 
     @Test
-    fun getPrice_inCaseOfSuccessShouldReturnPriceFromEndpoint (){
+    fun getPrice_inCaseOfSuccessShouldReturnPriceFromEndpoint ()= runBlocking{
         val expectedResultEndpoint = Price("","","",0,"","","","")
 
-        every {
-            runBlocking {
-                endpoint.getPrice(any(),any(),any(),any())
-            }
+        coEvery {
+            endpoint.getPrice(any(),any(),any(),any())
         } returns expectedResultEndpoint
 
-        runBlocking {
-            val result = priceRepository.getPrice("","","","")
-            Assert.assertEquals(expectedResultEndpoint,result)
-        }
+        val result = priceRepository.getPrice("","","","")
+        Assert.assertEquals(expectedResultEndpoint,result)
     }
 }

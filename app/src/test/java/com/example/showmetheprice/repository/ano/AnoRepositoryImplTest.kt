@@ -21,18 +21,17 @@ internal class AnoRepositoryImplTest {
     }
 
     @Test
-    fun getAno_ShouldReturnListOfAnoFromEndpoint (){
-        val expectedResultEndpoint : List<Ano> = listOf(
-            Ano("2020","2020-1"),
-        )
-
+    fun getAno_ShouldReturnListOfAnoFromEndpoint () = runBlocking{
+        //Given
+        val expectedResultEndpoint : List<Ano> = listOf(Ano("2020","2020-1"))
         coEvery {
             endpoint.getAno(any(), any(), any())
         } returns expectedResultEndpoint
 
-        runBlocking {
-            val result = anoRepository.getAno("","","")
-            assertEquals(expectedResultEndpoint,result)
-        }
+        //When
+        val result = anoRepository.getAno("","","")
+
+        //Then
+        assertEquals(expectedResultEndpoint,result)
     }
 }
